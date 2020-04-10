@@ -46,7 +46,7 @@ namespace medpermapp.api.Models
                 throw new ArgumentNullException(nameof(obj));
             }
 
-            return obj != null && !(obj is System.DBNull) && Id == ((Patient) obj).Id;
+            return obj != null && !(obj is System.DBNull);
         }
 
         public override int GetHashCode()
@@ -56,7 +56,7 @@ namespace medpermapp.api.Models
 
         public override string ToString()
         {
-            return base.ToString();
+            return FirstName + LastName + Address;
         }
     }
 }

@@ -10,8 +10,8 @@ using medpermapp.api.Data;
 namespace medpermapp.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200406100807_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200407161310_NewMig")]
+    partial class NewMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,9 @@ namespace medpermapp.api.Migrations
             modelBuilder.Entity("medpermapp.api.Models.Address", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int?>("CityId")
                         .HasColumnType("integer");
@@ -104,6 +106,9 @@ namespace medpermapp.api.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Cnp")
                         .HasColumnType("text");
 
@@ -121,6 +126,8 @@ namespace medpermapp.api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
                     b.ToTable("Patients");
                 });
 
@@ -137,12 +144,13 @@ namespace medpermapp.api.Migrations
                     b.HasOne("medpermapp.api.Models.County", "County")
                         .WithMany()
                         .HasForeignKey("CountyId");
+                });
 
-                    b.HasOne("medpermapp.api.Models.Patient", "Patient")
-                        .WithOne("Address")
-                        .HasForeignKey("medpermapp.api.Models.Address", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("medpermapp.api.Models.Patient", b =>
+                {
+                    b.HasOne("medpermapp.api.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
                 });
 #pragma warning restore 612, 618
         }

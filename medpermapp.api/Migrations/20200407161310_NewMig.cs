@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace medpermapp.api.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class NewMig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,27 +48,11 @@ namespace medpermapp.api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
+                name: "Addresses",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    Cnp = table.Column<string>(nullable: true),
-                    FInitLetter = table.Column<char>(nullable: false),
-                    RegistrationDate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Patients", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false),
                     CityId = table.Column<int>(nullable: true),
                     CountyId = table.Column<int>(nullable: true),
                     CountryId = table.Column<int>(nullable: true),
@@ -96,12 +80,30 @@ namespace medpermapp.api.Migrations
                         principalTable: "Counties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Patients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Cnp = table.Column<string>(nullable: true),
+                    FInitLetter = table.Column<char>(nullable: false),
+                    RegistrationDate = table.Column<DateTime>(nullable: false),
+                    AddressId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Patients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Addresses_Patients_Id",
-                        column: x => x.Id,
-                        principalTable: "Patients",
+                        name: "FK_Patients_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -118,10 +120,18 @@ namespace medpermapp.api.Migrations
                 name: "IX_Addresses_CountyId",
                 table: "Addresses",
                 column: "CountyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_AddressId",
+                table: "Patients",
+                column: "AddressId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Patients");
+
             migrationBuilder.DropTable(
                 name: "Addresses");
 
@@ -133,9 +143,6 @@ namespace medpermapp.api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Counties");
-
-            migrationBuilder.DropTable(
-                name: "Patients");
         }
     }
 }

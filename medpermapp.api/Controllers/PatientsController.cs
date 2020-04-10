@@ -23,14 +23,31 @@ namespace medpermapp.api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPatients() 
         {
-            var patients = await _context.Patients.ToListAsync();
+            var patients = await _context.Patients
+            .Include(pat => pat.Address)
+                .ThenInclude(add => add.City)
+            .Include(pat => pat.Address)
+                .ThenInclude(add => add.County)
+            .Include(pat => pat.Address)
+                .ThenInclude(add => add.Country)
+            .ToListAsync();
+            foreach(var patient in patients) {
+                System.Console.WriteLine(patient);
+            }
             return Ok(patients);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPatient(int id) 
         {
-            var value = await _context.Patients.FirstOrDefaultAsync(patient => patient.Id == id);
+            var value = await _context.Patients.Include(patient => patient.Address)
+            .Include(pat => pat.Address)
+                .ThenInclude(add => add.City)
+            .Include(pat => pat.Address)
+                .ThenInclude(add => add.County)
+            .Include(pat => pat.Address)
+                .ThenInclude(add => add.Country)
+            .FirstOrDefaultAsync(patient => patient.Id == id);
 
             return Ok(value);
         }

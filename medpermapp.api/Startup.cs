@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using medpermapp.api.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
+using medpermapp.api.Services;
 
 namespace medpermapp.api
 {
@@ -31,8 +32,8 @@ namespace medpermapp.api
             services.AddControllers();
             services.AddEntityFrameworkNpgsql().AddDbContext<DataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("MyConnectionString")));   
             services.AddCors();
-            // services.AddSpaStaticFiles(config => config.RootPath = "wwwroot");
-            // services.AddSingleton(typeof(PatientService), new PatientService());
+            services.AddSpaStaticFiles(config => config.RootPath = "/./wwwroot");
+            services.AddSingleton<PatientService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,8 +44,8 @@ namespace medpermapp.api
                 app.UseDeveloperExceptionPage();
             }
 
-            // app.UseStaticFiles();
-            // app.UseSpaStaticFiles();
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
  
@@ -58,40 +59,40 @@ namespace medpermapp.api
             {
                 endpoints.MapControllers();
             });
- 
-            // app.UseWebSockets();
-            // app.Use(async (context, next) =>
-            // {
-            //     if (context.Request.Path == "/ws")
-            //     {
-            //         if (context.WebSockets.IsWebSocketRequest)
-            //         {
-            //             var socket = await context.WebSockets.AcceptWebSocketAsync();
-            //             var squareService = (PatientService)app.ApplicationServices.GetService(typeof(PatientService));
-            //             await squareService.AddUser(socket);
-            //             while (socket.State == WebSocketState.Open)
-            //             {
-            //                 await Task.Delay(TimeSpan.FromMinutes(1));
-            //             }
-            //         }
-            //         else
-            //         {
-            //             context.Response.StatusCode = 400;
-            //         }
-            //     }
-            //     else
-            //     {
-            //         await next();
-            //     }
-            // });
-            // app.UseSpa(config =>
-            // {
-            //     config.Options.SourcePath = "client-app";
-            //     if (env.IsDevelopment())
-            //     {
-            //         config.UseAngularCliServer("start");
-            //     }
-            // });
+
+            app.UseWebSockets();
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/ws")
+                {
+                    if (context.WebSockets.IsWebSocketRequest)
+                    {
+                        var socket = await context.WebSockets.AcceptWebSocketAsync();
+                        var patientService = (PatientService)app.ApplicationServices.GetService(typeof(PatientService));
+                        await patientService.AddUser(socket);
+                        while (socket.State == WebSocketState.Open)
+                        {
+                            await Task.Delay(TimeSpan.FromMinutes(1));
+                        }
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 400;
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+            });
+            app.UseSpa(config =>
+            {
+                config.Options.SourcePath = "/./medpermapp-spa";
+                if (env.IsDevelopment())
+                {
+                    config.UseAngularCliServer("start");
+                }
+            });
         }
     }
 }

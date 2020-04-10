@@ -9,7 +9,6 @@ namespace medpermapp.api.Models
         public  City City { get; set; }
         public  County County { get; set; }
         public  Country Country { get; set; }
-        public Patient Patient { get; set; }
         public string Details { get; set; }
         public string PostalCode { get; set; }
 
@@ -46,7 +45,7 @@ namespace medpermapp.api.Models
 
         public override string ToString()
         {
-            return base.ToString();
+            return City.ToString() + Country.ToString() + County.ToString();
         }
     }
 }

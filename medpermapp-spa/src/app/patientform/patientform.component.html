@@ -1,0 +1,71 @@
+<div class="container">
+  <h3>Patient Manager</h3>
+  <hr>
+
+  <p class="h4 mb-4">Save Patient</p>
+
+  <form action="#" method="POST">
+
+      <!-- Add hidden form field to handle update -->
+      <input type="hidden" value="{{patient?.Id}}">
+
+      <input type="text" id="fnameField" [(ngModel)]="firstName" name="firstName"
+                 class="from-control mb-4 col-4" placeholder="First name">
+
+      <br>
+
+      <input type="text" id="lnameField" [(ngModel)]="lastName" name="lastName"
+                 class="from-control mb-4 col-4" placeholder="Last name">
+
+      <br>
+
+      <input type="text" maxlength=1 id="fInitField" [(ngModel)]="FInit" name="FInit"
+             class="from-control mb-4 col-4" placeholder="Father Initial">
+
+      <br>
+
+      <input type="text" id="cnpField" [(ngModel)]="cnp" name="cnp"
+                 class="from-control mb-4 col-4" placeholder="CNP">
+
+      <br>
+
+      <select class="form-control mb-4 col-4" id="countryField" [(ngModel)]="selectedCountry" name="selectedCountry">
+          <option value="0">Select country</option>
+          <option *ngFor="let country of countries" value="{{country.Id}}" [innerHTML]="country.Name"></option>
+          <!-- <option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"></option> -->
+      </select>
+
+      <br>
+
+      <select class="form-control mb-4 col-4" id="countyField" [(ngModel)]="selectedCounty" name="selectedCounty">
+          <option value="0">Select county</option>
+          <option *ngFor="let county of counties" value="{{county.Id}}" [innerHTML]="county.Name"></option>
+          <!-- <option th:each="county : ${counties}" th:value="${county.id}" th:text="${county.name}"></option> -->
+      </select>
+
+      <br>
+
+      <select class="form-control mb-4 col-4" id="cityField" [(ngModel)]="selectedCity" name="selectedCity">
+          <option value="0">Select city</option>
+          <option *ngFor="let city of cities" value="{{city.Id}}" [innerHTML]="city.Name"></option>
+          <!-- <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option> -->
+      </select>
+
+      <br>
+
+      <input type="text" id="detailsField" [(ngModel)]="details" name="details"
+             class="from-control mb-4 col-10" placeholder="Address details">
+
+      <br>
+
+      <input type="text" id="postalField" [(ngModel)]="postal" name="postal"
+             class="from-control mb-4 col-4" placeholder="Postal code">
+
+      <br>
+
+      <button type="submit" routerLink="/patients" routerLinkActive="active" class="btn btn-info col-2" (click) = saveEvent()>Save</button>
+  </form>
+
+  <hr>
+  <a routerLink="/patients" routerLinkActive="active">Back to Patient List</a>
+</div>
