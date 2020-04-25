@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using medpermapp.api.Data;
-using medpermapp.api.Models;
+using medpermapp.api.ModelsThrift;
 using medpermapp.api.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace medpermapp.api.Services
 {
-    public class PatientService
+    public partial class PatientService
     {
         private ConcurrentDictionary<string, WebSocket> _users = new ConcurrentDictionary<string, WebSocket>();
         private readonly IServiceScopeFactory _factory;
@@ -125,7 +125,7 @@ namespace medpermapp.api.Services
                 patient.Address.City = city;
                 patient.Address.County = county;
                 patient.Address.Country = country;
-                patient.RegistrationDate = DateTime.Now;
+                patient.RegistrationDate = DateTime.Now.ToShortDateString();
                 await context.Addresses.AddAsync(patient.Address);
                 await context.Patients.AddAsync(patient);
                 context.SaveChanges();

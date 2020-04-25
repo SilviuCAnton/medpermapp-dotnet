@@ -1,4 +1,5 @@
-using medpermapp.api.Models;
+
+using medpermapp.api.ModelsThrift;
 using Microsoft.EntityFrameworkCore;
 
 namespace medpermapp.api.Data
@@ -6,6 +7,8 @@ namespace medpermapp.api.Data
     public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) {}
+
+        public DataContext() : base() {}
 
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Address> Addresses { get; set; }
